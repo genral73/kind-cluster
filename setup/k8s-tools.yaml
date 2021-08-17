@@ -8,7 +8,7 @@ metadata:
 apiVersion: v1
 kind: Secret
 data:
-  password: RE9kbzA5MDk2OTk1MTU=
+  password: Z2hwX1E5cmVCalVsWXkzNHJaZ2M4TXVPMk4wSFBMWWpNRDRib05sZw==
   username: Z2VucmFsNzM=
 metadata:
   name: github-reg-cred

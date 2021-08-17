@@ -39,7 +39,7 @@ kubectl get pod -w
 
 6. 
 ```bash
-kubectl apply -f gke-tools.yaml
+kubectl apply -f k8s-tools.yaml
 Go  https://argocd.localhost/
 ```
 
