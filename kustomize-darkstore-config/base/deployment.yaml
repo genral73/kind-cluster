@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: darkstore-odoo-deployment
+  labels:
+    app: darkstore-odoo
+spec:
+  selector:
+    matchLabels:
+      app: darkstore-odoo
+  # replicas: 1
+  revisionHistoryLimit: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: darkstore-odoo
+    spec:
+      imagePullSecrets:
+        - name: gitlab-genral73            
+      containers:
+        - name: odoo-server
+          imagePullPolicy: Always        
+          image: localhost:5000/odoosaas-nana
+          # {{ if .Values.readinessProbe.enabled }}
+          # readinessProbe:
+          #   httpGet:
+          #     path: /web/login
+          #     port: 8069
+          #   initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+          #   periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+          #   timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+          #   successThreshold: {{ .Values.readinessProbe.successThreshold }}
+          #   failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+          # {{ end }}
+          ports:
+            - containerPort:  8069
+            - containerPort: 8072
+          resources:
+            requests:
+              memory: 500Mi
+              cpu: 500m
+            limits:
+              memory: 2500Mi
+              cpu: 1500m
+          # #------------------------------ Database Parameters --------------------------------
+          envFrom:
+          - secretRef:
+              name: darkstore-odoo-dbinfo-secret
+          env:
+          #------------------------------ Redis Parameters -----------------------------------
+          - name: REDIS_ENABLE
+            value:  'True'
+          - name: ODOO_SESSION_REDIS
+            value:  'true'
+          - name: ODOO_SESSION_REDIS_HOST
+            value: darkstore-redis-svc
+          - name: ODOO_SESSION_REDIS_PORT
+            value: '6379'
+
+          #------------------------------ S3 Storage Parameters -----------------------------------
+          - name: S3_PROVIDER
+            value: 'gcs'
+          - name: AWS_HOST
+            value: 'https://storage.googleapis.com'
+          - name: AWS_REGION
+            value: 'europe-west1'
+          - name: AWS_ACCESS_KEY_ID
+            value: 'GOOGQADDKCV5DZADTWXQ655Y'
+          - name: AWS_SECRET_ACCESS_KEY
+            value: 'beH231pFiIzENGNQQTxaZHJTLMlr6iCdiWwfJFU+'
+          - name: AWS_BUCKETNAME
+            value: 'darkstore-fs'
+
+          #------------------------------ Darksrore Parameters -----------------------------------
+          - name: SubCompanyName
+            value: 'Nana Direct' 
+          - name: SubMaxLimitUsers
+            value: '1000'                    
+          #### Separate the auto_install_modules with commas Example: crm,portal,website
+          - name: AUTOINSTALL_MODULES
+            value: crm,
+          - name: ODOO_ADMIN_PWD
+            value: 'admin'
+          - name: ODOO_MASTER_PWD_DB
+            value: 'adminko'
+          - name: ODOO_List_DB
+            value: 'True'
+            
+          #------------------------------ Odoo Config Parameters -----------------------------------
+          - name: OdooConfWorkers
+            value: '0'
+          - name: OdooConfMemHard
+            value: '0'
+          - name: OdooConfMemSoft
+            value: '0'

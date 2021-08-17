@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.DeploymentID }}
+  labels:
+    environment: dev
+    app: darkstore-odoo
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.DeploymentID }}
+  replicas: {{ .Values.spec.replicaCount }}
+  revisionHistoryLimit: 1
+  strategy:
+    type: {{ .Values.spec.type }}
+  template:
+    metadata:
+      annotations:  
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+      labels:
+        app: {{ .Values.DeploymentID }}
+        environment: dev        
+    spec:
+      imagePullSecrets:
+        - name: gitlab-genral73
+        - name: gcr-reg-cred         
+      containers:
+        - name: odoo-server
+          imagePullPolicy: Always        
+          image: "{{ .Values.image.name }}:{{ .Values.image.tag }}"
+          {{ if .Values.readinessProbe.enabled }}        
+          readinessProbe:
+            httpGet:
+              path: /web/login
+              port: 8069
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+          {{ end }}
+          ports:
+            - containerPort:  8069
+            - containerPort: 8072
+          resources:
+            requests:
+              memory: {{ .Values.spec.requests.memory }}
+              cpu: {{ .Values.spec.requests.cpu }}
+            limits:
+              memory: {{ .Values.spec.limits.memory }}
+              cpu: {{ .Values.spec.limits.cpu }}
+
+          envFrom:
+          - secretRef:
+              name: {{ .Values.DeploymentID }}-odoo-secret
+
+          env:
+          #------------------------------ Odoo Parameters -----------------------------------
+          - name: S3_MODULE
+            value: ',attachment_s3'
+          - name: S3_FLAG
+            value: 's3'
+          - name: REDIS_MODULE
+            value: ',session_redis'
+          - name: ODOO_SESSION_REDIS
+            value:  'true'
+          - name: ODOO_SESSION_REDIS_HOST
+            value: erpredis-{{ .Values.DeploymentID }}          
+          - name: ODOO_SESSION_REDIS_PORT
+            value: '6379'
+          - name: WORKERS
+            value: '{{ .Values.odoo.ConfWorkers }}'
+          - name: LIMIT_MEMORY_HARD
+            value: '{{ .Values.odoo.ConfMemHard }}'
+          - name: LIMIT_MEMORY_SOFT
+            value: '{{ .Values.odoo.ConfMemSoft }}'
+          - name: AUTOINSTALL_MODULES
+            value: '{{ .Values.odoo.AutoInstallModules }}'
+          - name: ODOO_List_DB
+            value: '{{ .Values.odoo.ListDB }}'

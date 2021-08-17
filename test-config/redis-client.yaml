@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: redis-client
+  name: redis-client
+spec:
+  containers:
+  - command:
+    - sleep
+    - 40d
+    image: docker.io/bitnami/redis:6.2.4-debian-10-r13
+    imagePullPolicy: IfNotPresent
+    name: redis-client

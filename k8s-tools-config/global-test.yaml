@@ -1,0 +1,162 @@
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: test
+#   labels:
+#     environment: test
+# ---    
+# apiVersion: v1
+# kind: ResourceQuota
+# metadata:
+#   name: test-resources-quota
+#   namespace: test
+# spec:
+#   hard:
+#     limits.cpu: "3000m"
+#     limits.memory: 6.1Gi
+#     count/pods: "8"
+#     count/services: "8"
+#     count/secrets: "8"
+#     count/configmaps: "8"
+#     count/deployments.apps: "16"
+#     count/replicasets.apps: "16"
+#     count/statefulsets.apps: "16"
+#     count/jobs.batch: "16"
+#     count/cronjobs.batch: "16"
+#     count/deployments.extensions: "16"
+# ---
+# apiVersion: v1
+# kind: LimitRange
+# metadata:
+#   name: test-limit-range
+#   namespace: test
+# spec:
+#   limits:
+#   - default:
+#       memory: 512Mi
+#       cpu: 1000m
+#     defaultRequest:
+#       memory: 128Mi
+#       cpu: 100m
+#     type: Container
+# ---
+# apiVersion: v1
+# kind: ServiceAccount
+# metadata:
+#   name: default
+#   namespace: test
+# imagePullSecrets:
+# - name: gitlab-reg-cred
+# ---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: ClusterRoleBinding
+# metadata:
+#   name: test-root-psp
+#   labels:
+#     addonmanager.kubernetes.io/mode: EnsureExists
+# roleRef:
+#   apiGroup: rbac.authorization.k8s.io
+#   kind: ClusterRole
+#   name: psp:restricted
+# subjects:
+# - kind: ServiceAccount
+#   name: default
+#   namespace: test
+# ---
+# # apiVersion: rbacmanager.reactiveops.io/v1beta1
+# # kind: RBACDefinition
+# # metadata:
+# #   name: test-app-operators
+# # rbacBindings:
+# #   - name: users
+# #     subjects:
+# #       - kind: User
+# #         name: "admin"
+# #       - kind: User
+# #         name: "dafaallah"
+# #     roleBindings:
+# #       - namespace: "test"
+# #         clusterRole: app-operator
+# ---
+# apiVersion: v1
+# kind: Secret
+# data:
+#   password: RE9kbzA5MDk2OTk1MTU=
+#   username: Z2VucmFsNzM=
+# metadata:
+#   name: gitlab-reg-cred
+#   namespace: test
+# type: Opaque
+# ---
+# apiVersion: argoproj.io/v1alpha1
+# kind: AppProject
+# metadata:
+#   name: test
+#   namespace: argocd
+#   finalizers:
+#     - resources-finalizer.argocd.argoproj.io
+# spec:
+#   description: Darkstore Project
+#   sourceRepos:
+#   - '*'
+#   destinations:
+#   - namespace: test
+#     server: https://kubernetes.default.svc
+
+#   clusterResourceWhitelist:
+#   - group: '*'
+#     kind: '*'
+
+#   namespaceResourceBlacklist:
+#   - group: ''
+#     kind: ResourceQuota
+#   - group: ''
+#     kind: LimitRange
+#   - group: ''
+#     kind: NetworkPolicy
+
+#   namespaceResourceWhitelist:
+#   - group: '*'
+#     kind: '*'
+# #  - group: 'apps'
+# #    kind: StatefulSet
+
+#   orphanedResources:
+#     warn: false
+
+#   roles:
+#   - name: project-readonly
+#     description: Read-only privileges to test
+#     policies:
+#     - p, proj:test:project-readonly, applications, get, test/*, allow
+#     groups:
+#     - genral73@gmail.com
+    
+#   - name: project-operator
+#     description: Read-only privileges to test
+#     policies:
+#     - p, proj:test:project-operator, applications, *, test/*, allow
+#     groups:
+#     - dafallah.hussien@nana.sa
+#     jwtTokens:
+#     - iat: 1604931124
+#       id: 6c276c70-0f97-4d22-aac9-20924442e25c
+# ---
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: test-config
+#   namespace: argocd
+# spec:
+#   project: test
+#   source:
+#     repoURL: 'https://gitlab.com/genral73/odoosaas-nana.git'
+#     path: k8s/test-config
+#     targetRevision: HEAD
+#   destination:
+#     server: 'https://kubernetes.default.svc'
+#     namespace: test
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true      

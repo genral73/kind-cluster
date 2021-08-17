@@ -1,0 +1,59 @@
+{{ if eq .Values.redis.IsEnabled "True" }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: erpredis-{{ .Values.DeploymentID }}
+  labels:
+    app: redis
+spec:
+  ports:
+  - port: 6379
+    protocol: TCP
+  selector:
+    app: redis
+  type: ClusterIP
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: erpredis-{{ .Values.DeploymentID }}
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  serviceName: "redis"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:6.2.4
+        command: ["redis-server", "--appendonly", "yes"]
+        ports:
+        - containerPort: 6379
+          name: web
+        resources:
+          requests:
+            memory: "1024Mi"
+            cpu: "1000m"        
+          limits:
+            memory: "1024Mi"
+            cpu: "1000m"
+        volumeMounts:
+        - name: redis-{{ .Values.DeploymentID }}-aof
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-{{ .Values.DeploymentID }}-aof
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "standard"
+      resources:
+        requests:
+          storage: 0.1Gi
+{{ end }}

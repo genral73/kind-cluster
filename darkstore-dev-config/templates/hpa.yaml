@@ -1,0 +1,15 @@
+{{ if .Values.horizontalPodAutoscaler.IsEnabled }}
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.DeploymentID }}
+spec:
+  maxReplicas: {{ .Values.horizontalPodAutoscaler.MaxReplicas }}
+  minReplicas:  {{ .Values.horizontalPodAutoscaler.MinReplicas }}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.DeploymentID }}-erp
+  targetCPUUtilizationPercentage:  {{ .Values.horizontalPodAutoscaler.TargetCpuUtilizationPercentage }}
+{{ end }}  

@@ -1,0 +1,45 @@
+server:
+  config:
+    repositories: |
+      - passwordSecret:
+          key: password
+          name: github-reg-cred
+        type: git
+        url: https://github.com/genral73/k8s-kind.git
+        usernameSecret:
+          key: username
+          name: github-reg-cred
+      - passwordSecret:
+          key: password
+          name: gitlab-reg-cred
+        type: git
+        url: https://gitlab.com/genral73/odoosaas-nana.git
+        usernameSecret:
+          key: username
+          name: gitlab-reg-cred
+    url: http://argocd.localhost
+
+  extraArgs:
+    - --insecure
+  ingress:
+    enabled: true
+    annotations:
+#      cert-manager.io/cluster-issuer: letsencrypt
+      kubernetes.io/ingress.class: nginx
+#      nginx.ingress.kubernetes.io/force-ssl-redirect: "flase"
+#      nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+    hosts:
+      - argocd.localhost
+    paths:
+      - /
+#    tls:
+#      - secretName: argocd-tls
+#        hosts:
+#          - argocd.localhost
+
+# ## Dex
+dex:
+  enabled: false
+
+# Set to false if you are using helm 3 or later, true otherwise
+# installCRDs: false

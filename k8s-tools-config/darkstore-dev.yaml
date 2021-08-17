@@ -1,0 +1,175 @@
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: darkstore-dev
+#   labels:
+#     environment: dev
+# ---    
+# # apiVersion: v1
+# # kind: ResourceQuota
+# # metadata:
+# #   name: darkstore-dev-resources-quota
+# #   namespace: darkstore-dev
+# # spec:
+# #   hard:
+# #     limits.cpu: "5000m"
+# #     limits.memory: 6Gi
+# #     count/pods: "16"
+# #     count/services: "16"
+# #     count/secrets: "16"
+# #     count/configmaps: "16"
+# #     count/deployments.apps: "8"
+# #     count/replicasets.apps: "16"
+# #     count/statefulsets.apps: "16"
+# #     count/jobs.batch: "16"
+# #     count/cronjobs.batch: "16"
+# #     count/deployments.extensions: "16"
+# # ---
+# # apiVersion: v1
+# # kind: LimitRange
+# # metadata:
+# #   name: darkstore-dev-limit-range
+# #   namespace: darkstore-dev
+# # spec:
+# #   limits:
+# #   - default:
+# #       memory: 6000Gi
+# #       cpu: 5000m
+# #     defaultRequest:
+# #       memory: 128Mi
+# #       cpu: 100m
+# #     type: Container
+# # ---
+# apiVersion: v1
+# kind: ServiceAccount
+# metadata:
+#   name: default
+#   namespace: darkstore-dev
+# imagePullSecrets:
+# - name: gitlab-reg-cred
+# - name: gcr-reg-cred
+# ---
+# apiVersion: v1
+# data:
+#   .dockerconfigjson: ewoJImF1dGhzIjogewoJCSJldS5nY3IuaW8iOiB7CgkJCSJhdXRoIjogIlgycHpiMjVmYTJWNU9uc0tJQ0FpZEhsd1pTSTZJQ0p6WlhKMmFXTmxYMkZqWTI5MWJuUWlMQW9nSUNKd2NtOXFaV04wWDJsa0lqb2dJbTVoYm1FdFpHRnlhM04wYjNKbElpd0tJQ0FpY0hKcGRtRjBaVjlyWlhsZmFXUWlPaUFpWW1Vd09EZzRaREV5WVdOaFlXTTNaR0prWkRnMU5EY3pZbUpsWWpoalpqa3hNV1poTlRVMU55SXNDaUFnSW5CeWFYWmhkR1ZmYTJWNUlqb2dJaTB0TFMwdFFrVkhTVTRnVUZKSlZrRlVSU0JMUlZrdExTMHRMVnh1VFVsSlJYWm5TVUpCUkVGT1FtZHJjV2hyYVVjNWR6QkNRVkZGUmtGQlUwTkNTMmQzWjJkVGEwRm5SVUZCYjBsQ1FWRkVTbmhGUkZZeWJEVk9NRUZUY2x4dVV6TnRTekpRTURWNFFVMUdTSFF2VVU1V01qTkxaekUyVHpoQ2FFNWtWSFJQU3poeGFTOTBabE51UzBZMWNVTjFXVEkxY1RSSVRIZEpSRXRKY1ZsWFVseHVMMEZKWlVseE5EaGxjREkzV1ZSVmFVbFlibVZNTVZOTVJGSnFXamhSU1U4NE1VZFpUblZWVEhVMFIyVlFWMFJ0YjJwck1HZEVkMXB2UW5Bek4wTllkVnh1UkNzMllra3JTRVEwYlRsNk0zUlFOVXBEVFU0MFQxY3dNV1JuY2tSUGFrcDVUVVpOWTFsdmFFeFpaV3BPTjI1RmJsUmxXRmRtTUhKSmRrRlFlVlpPWjF4dU5qTk5UMmxMVTBSNVNuVnphVE5CVkd4Q1J6ZFFiMnRCUm5FNU5GTkRjMk0wVkdOR1NuQXhhekpSTmtkQkwwbGxRWE40TVdGWFJVNTVXSHBTV1ROT05WeHVVMll5UlhCVVpVdzNXRmxETkVWUmNISTBhUzlFZURacVJXNDJaRFp3VmtsVk0zWnlLMmxIUnpKUE0ycEpSbUUyUTJKV1lsQkZaRk5RU2s5M1NYRk5SMXh1ZVU1d04xaDZXa3BCWjAxQ1FVRkZRMmRuUlVGVGVrSlNPSFlyTVRkbGVISnRVVkFyZW5KSVVFdEJVVEpHWlZoelFsQlRiVTFHYUVFdmIwTmxlaTl6VjF4dVJuSk1kR1l2TnpkV1dXSjVValZxY1RONVNGcHdORlowTHpkTldEaGtjWFZzYm1wb2RIbFpORnBRZUZOd1JqTXdlRmgyVWtwUE0yaGFVa2xxTlZNdlRseHVhM2hITUc5bVRYWkNkVVJCZWtZelYwdDNlR2RKWjB3MWIzQnJTakZCTDFORlRGZHhUblpGTTNSR05VSktNVFYxUVhWWGJrWkphSFpSWVZWQ1RXZFZjbHh1WkdWbGNUY3JSVzVHYjA1VldrODJMMGQzYzBobFIzRXhiWEZMUzFwbWJGWjJOMmRCVUcxdFRHMXphVzVSTUhwTGIxTmFOSGRvSzFsbFdreExVREp2Tmx4dVRWbFliakkxVmxKM1ptRjRTbXMwTnk5MVFrUkZhbVI2WlZWNFpqUlNXR2swWVhkM1NFbHZSell4UVhKdlVVSXlWekJFUjBwa2IzSXhXa0Z1YTJkaVZWeHVXR3gzYWxkTFZ6Y3daV2xrUm1veGJ6QnFTQzlPWVZsMU5GWkpVWFp3TVdVdmNYZElZV3hsZUdWM1MwSm5VVVIxUzBOd2MyeExTemxJVm01TlFqTXZRVnh1UkV0aldqWnRXVk52YTJ3M2RtdDRUR0ZWUkRZelRVMU9LMVUzVjFsR2VVWm5lazF6UzBwcWMweHJjeTl3Y0NzNFEyRlZZMGhNV1c1Mk1ETldTbTg0VDF4dVVYSktkV0kyU21oV2JGTTRObFpRVUVKbVVsZGxhMWRyWjAxTlprSnBaRFozVERkd1QyTkhSVlpaT1ZBMmFHaHpNalYwU0dzNVNIcHlTVUphZFRkT1VseHVlRWwxUTJkeE5YaHNSM0ZFY0ZNelUxSktkaXQxWWpOMFQzZExRbWRSUkZrMGFDOU5TbkZhTVRkekszVjBiVnBET1dGSGVYRkxXR3BETDFabWFWazBUMXh1YlUxdldtbFdSRXgzUVV0MWQxcHJkQzkzVjB0aFMwRnNTbVkyZVZGblRGRnZieXQxVFZVelZVSTNVbEZIYm0xU1RYUndVbUZHVTBabU1UUnFVbmMzVlZ4dWEzTndkVlo0Y3pkT1pFUXlOWEF2WjI5RFl6VjNhMFJuU0hwRmJERTVZWFZ0YzAxcU9HOU1SbVJpWVVSemRHRmpWRWxwUjFKMVlWQnBSR053YUdWS2JGeHVjblJ1YkdsYWVrTlRkMHRDWjFGRWNuTlhOa001VUhFeGVFbFdjRU5aWW1oeWRWQXhTSFZuVkhsMU5rVmxORzFSU0VWUFJuZGtUamhWWkRRelFsUnBjbHh1YmxoUFdWbFVhM1ZxU1ZwSFNWRllNbXd5YTBSRlJuTndjbEZqTDFOeFJFeFZWRU0zV1U1dVNVVlRUbVJ5YlVWWFFXMVBWVGRtT1dOV1ZqVkdjSFJoVGx4dVozQkhkSGxWTXl0U1NuSklWVkJ6U2xOTVJUbFFhM0pNUzBVMFEwRkhVSGRMVmpaVlRTOWhiVk15WVRaclJUbDJlVUo2UjBaR1lXeHVkMHRDWjBSSVkxeHVhM05xYUc1bFYwSkhUbWR0T0ZFeU1UUlJNM012WlRWalFXNWhUR0pzUW0xNWFHWnBNMDlPY1RadVREUTJWbTFOZUhRMVUxQllZM00zUVdoYVlYTktRMXh1YWxaMlZEQXZka3RLWVdSQk0zWkJSbmt2Um5CV1pqQXpSV2hLTUU1TVIydGhZM1pEVms4eFp6WjNSRWxrY25ONWRISklkSFZtUzAweVZWUkdRVmxOTUZ4dU5qSlpjRk1yTVZCeFlqRlFZMVV5VUhaMFpEUkdNblZ4VDJ4NFpXWnVWVFJLVEhCRWVpOXNVRUZ2UjBKQlRqaDJXVXhWV1VGVVVqQm1NRUUxWVU1QlNseHVUSFZQUlVSSWVsVjVhVk5rTDFoVmNqTlBka0Z2VFhkWU1YQnVhMUUxVlhnM01taG1LMmx2ZFVSa0wzWndkSEV2Y0dGbGRIVk9ORzVCUVZrM2N6VkpWRnh1ZVRkYWNHWmFlVUl5V0hsd056WnZlWE5YUjJ0NWNUSjBUMDgzVXpobFEydFRNR2hHTjJ4Mk9VOUNabEpWYWprMFNYbzNVU3R2WldaT1FsRllNVWgxYkZ4dWVETnBNVk5HSzNoUWQyMDNNVzEzUzJsNlVXbFBRMFZ0WEc0dExTMHRMVVZPUkNCUVVrbFdRVlJGSUV0RldTMHRMUzB0WEc0aUxBb2dJQ0pqYkdsbGJuUmZaVzFoYVd3aU9pQWlaMk55TFRZMU1rQnVZVzVoTFdSaGNtdHpkRzl5WlM1cFlXMHVaM05sY25acFkyVmhZMk52ZFc1MExtTnZiU0lzQ2lBZ0ltTnNhV1Z1ZEY5cFpDSTZJQ0l4TURReE1ETXdNams0TVRVek1EQTNOVGd3TnpVaUxBb2dJQ0poZFhSb1gzVnlhU0k2SUNKb2RIUndjem92TDJGalkyOTFiblJ6TG1kdmIyZHNaUzVqYjIwdmJ5OXZZWFYwYURJdllYVjBhQ0lzQ2lBZ0luUnZhMlZ1WDNWeWFTSTZJQ0pvZEhSd2N6b3ZMMjloZFhSb01pNW5iMjluYkdWaGNHbHpMbU52YlM5MGIydGxiaUlzQ2lBZ0ltRjFkR2hmY0hKdmRtbGtaWEpmZURVd09WOWpaWEowWDNWeWJDSTZJQ0pvZEhSd2N6b3ZMM2QzZHk1bmIyOW5iR1ZoY0dsekxtTnZiUzl2WVhWMGFESXZkakV2WTJWeWRITWlMQW9nSUNKamJHbGxiblJmZURVd09WOWpaWEowWDNWeWJDSTZJQ0pvZEhSd2N6b3ZMM2QzZHk1bmIyOW5iR1ZoY0dsekxtTnZiUzl5YjJKdmRDOTJNUzl0WlhSaFpHRjBZUzk0TlRBNUwyZGpjaTAyTlRJbE5EQnVZVzVoTFdSaGNtdHpkRzl5WlM1cFlXMHVaM05sY25acFkyVmhZMk52ZFc1MExtTnZiU0lLZlE9PSIKCQl9Cgl9Cn0K
+# kind: Secret
+# metadata:
+#   name: gcr-reg-cred
+#   namespace: darkstore-dev
+# type: kubernetes.io/dockerconfigjson
+# ---
+
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: ClusterRoleBinding
+# metadata:
+#   name: darkstore-dev-root-psp
+#   labels:
+#     addonmanager.kubernetes.io/mode: EnsureExists
+# roleRef:
+#   apiGroup: rbac.authorization.k8s.io
+#   kind: ClusterRole
+#   name: psp:restricted
+# subjects:
+# - kind: ServiceAccount
+#   name: default
+#   namespace: darkstore-dev
+# ---
+# # apiVersion: rbacmanager.reactiveops.io/v1beta1
+# # kind: RBACDefinition
+# # metadata:
+# #   name: darkstore-dev-app-operators
+# # rbacBindings:
+# #   - name: users
+# #     subjects:
+# #       - kind: User
+# #         name: "dafaallah"
+# #     roleBindings:
+# #       - namespace: "darkstore-dev"
+# #         clusterRole: app-operator
+# # ---
+# apiVersion: v1
+# kind: Secret
+# data:
+#   password: RE9kbzA5MDk2OTk1MTU=
+#   username: Z2VucmFsNzM=
+# metadata:
+#   name: gitlab-reg-cred
+#   namespace: darkstore-dev
+# type: Opaque
+# ---
+# apiVersion: argoproj.io/v1alpha1
+# kind: AppProject
+# metadata:
+#   name: darkstore-dev
+#   namespace: argocd
+#   finalizers:
+#     - resources-finalizer.argocd.argoproj.io
+# spec:
+#   description: Darkstore Project
+#   sourceRepos:
+#   - '*'
+#   destinations:
+#   - namespace: darkstore-dev
+#     server: https://kubernetes.default.svc
+
+#   clusterResourceWhitelist:
+#   - group: '*'
+#     kind: '*'
+
+#   namespaceResourceBlacklist:
+#   - group: ''
+#     kind: ResourceQuota
+#   - group: ''
+#     kind: LimitRange
+#   - group: ''
+#     kind: NetworkPolicy
+
+#   namespaceResourceWhitelist:
+#   - group: '*'
+#     kind: '*'
+# #  - group: 'apps'
+# #    kind: StatefulSet
+
+#   orphanedResources:
+#     warn: false
+
+#   roles:
+#   - name: project-readonly
+#     description: Read-only privileges to darkstore-dev
+#     policies:
+#     - p, proj:darkstore-dev:project-readonly, applications, get, darkstore-dev/*, allow
+#     groups:
+#     - genral73@gmail.com
+    
+#   - name: project-operator
+#     description: Read-only privileges to darkstore-dev
+#     policies:
+#     - p, proj:darkstore-dev:project-operator, applications, *, darkstore-dev/*, allow
+#     groups:
+#     - dafallah.hussien@nana.sa
+#     jwtTokens:
+#     - iat: 16049311764
+#       id: 6c276c70-0f97-4d22-aac9-2091f423425c
+
+# ---      
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: darkstore-dev
+#   namespace: argocd
+# spec:
+#   project: darkstore-dev
+#   source:
+#     repoURL: 'https://gitlab.com/genral73/odoosaas-nana.git'
+#     path: k8s/darkstore-dev-config
+#     targetRevision: HEAD
+#     helm:
+#       valueFiles:
+#         - values.yaml    
+#   destination:
+#     server: 'https://kubernetes.default.svc'
+#     namespace: darkstore-dev
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true      

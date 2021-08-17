@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: darkstore-odoo-deployment
+  labels:
+    app: darkstore-odoo
+spec:
+  selector:
+    matchLabels:
+      app: darkstore-odoo
+  revisionHistoryLimit: 2
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      containers:
+        - name: odoo-server
+          imagePullPolicy: Always        
+          image: localhost:5000/odoosaas-nana:latest
+          resources:
+            requests:
+              memory: 600Mi
+              cpu: 600m
+            limits:
+              memory: 2600Mi
+              cpu: 1600m
+          # #------------------------------ Database Parameters --------------------------------
+          envFrom:
+          - secretRef:
+              name: dev-darkstore-odoo-dbinfo-secret
+          env:
+          #------------------------------ Redis Parameters -----------------------------------
+          - name: REDIS_ENABLE
+            value:  'True'
+          - name: ODOO_SESSION_REDIS
+            value:  'true'
+          - name: ODOO_SESSION_REDIS_HOST
+            value: dev-darkstore-redis-svc
+
+          #------------------------------ S3 Storage Parameters -----------------------------------
+          - name: AWS_REGION
+            value: 'eu'
+          - name: AWS_ACCESS_KEY_ID
+            value: 'GOOGQADDKCV5DZADTWXQ655Y'
+          - name: AWS_SECRET_ACCESS_KEY
+            value: 'beH231pFiIzENGNQQTxaZHJTLMlr6iCdiWwfJFU+'
+          - name: AWS_BUCKETNAME
+            value: 'dev-kustomize-darkstore-fs'
+
+          #------------------------------ Darksrore Parameters -----------------------------------
+          - name: AUTOINSTALL_MODULES
+            value: bi_all_in_one_branch_ent,website,website_helpdesk_form,helpdesk_repair,maintenance,pos_create_sales_order,custom_theme_14          
+          - name: SubCompanyName
+            value: 'Nana Direct Development' 
+          - name: SubMaxLimitUsers
+            value: '10'
+---
+
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: darkstore-odoo-ingress
+spec:
+  rules:
+    - host: kust-darkstroe.localhost
+      http:
+        paths:
+          - backend:
+              serviceName: dev-darkstore-odoo-svc
+              servicePort: http
+            path: /
+          - backend:
+              serviceName: dev-darkstore-odoo-svc
+              servicePort: longpolling
+            path: /longpolling
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: darkstore-redis-svc
+  labels:
+    app: darkstore-redis
+spec:
+  selector:
+    app: darkstore-redis
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: darkstore-redis-sts
+spec:
+  selector:
+    matchLabels:
+      app: darkstore-redis
+      environment: development
+  serviceName: "dev-darkstore-redis-svc"
+  template:
+    metadata:
+      labels:
+        app: darkstore-redis
+        environment: development
+    spec:
+      containers:
+      - name: redis-server
+        volumeMounts:
+        - name: dev-darkstore-redis-pvc
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: dev-darkstore-redis-pvc
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "standard"
+      resources:
+        requests:
+          storage: 0.1Gi

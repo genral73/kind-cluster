@@ -1,0 +1,44 @@
+#image:
+#  name: registry.gitlab.com/genral73/odoosaas-nana
+#  tag: latest
+image:
+  name:  localhost:5000/darkstore-odoo
+  tag: latest2
+spec:
+  requests:
+    memory: 500Mi
+    cpu: 500m
+  limits:
+    memory: 4000Mi
+    cpu: 2000m
+  replicaCount: 1
+  type: Recreate
+  # type: RollingUpdate
+
+SubDNS: darkstore-dev.localhost
+DeploymentID: darkstore-dev
+
+odoo:
+  AutoInstallModules: bi_all_in_one_branch_ent,website,website_helpdesk_form,helpdesk_repair,maintenance,pos_create_sales_order,custom_theme_14
+  #AutoInstallModules: bi_all_in_one_branch_ent,bi_branch_assets_ent,bi_branch_pos,bi_multi_branch_helpdesk,bi_odoo_crm_multi_branch,bi_odoo_mrp_multi_branch,bi_odoo_multi_branch_hr,bi_odoo_multi_branch_project,bi_odoo_multi_branch_tendor,branch,branch_accounting_report,website,helpdesk,website_helpdesk_form,helpdesk_repair,helpdesk_stock,maintenance,point_of_sale,pos_sale,pos_account_reports,pos_enterprise,pos_create_sales_order,custom_theme_14
+  ListDB: "True"
+  ConfWorkers: "3"
+  ConfMemHard: "3221225472"
+  ConfMemSoft: "2684354560"
+
+redis:
+  IsEnabled: "True"
+
+readinessProbe:
+  enabled: false
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
+  successThreshold: 1
+
+horizontalPodAutoscaler:
+  IsEnabled: false
+  MaxReplicas: 2
+  MinReplicas: 1
+  TargetCpuUtilizationPercentage: 80
