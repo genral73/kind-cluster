@@ -144,13 +144,13 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: k8s-resources
+  name: k8s-resources-tools
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: 'https://github.com/genral73/k8s-kind.git'
-    path: k8s-resources-ns
+    path: k8s-resources/tools
     targetRevision: HEAD
   destination:
     server: 'https://kubernetes.default.svc'
@@ -159,3 +159,22 @@ spec:
     automated:
       prune: true
       selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: k8s-resources-ns
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/genral73/k8s-kind.git'
+    path: k8s-resources/namespaces
+    targetRevision: HEAD
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: k8s-resources
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true        
