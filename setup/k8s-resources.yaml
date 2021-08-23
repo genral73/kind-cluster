@@ -147,7 +147,7 @@ metadata:
   name: k8s-tools
   namespace: argocd
 spec:
-  project: default
+  project: k8s-resources
   source:
     repoURL: 'https://github.com/genral73/k8s-kind.git'
     path: k8s-resources/tools
@@ -166,7 +166,7 @@ metadata:
   name: k8s-namespaces
   namespace: argocd
 spec:
-  project: default
+  project: k8s-resources
   source:
     repoURL: 'https://github.com/genral73/k8s-kind.git'
     path: k8s-resources/namespaces
