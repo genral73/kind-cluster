@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: sealedissuer
+
+resources:
+- controller-v0.16.0.yaml
+- secret.yaml
+- deployment.yaml
+- service.yaml
+- ingress.yaml
+images:
+- name: registry.gitlab.com/genral73/k8s-tools/sealedsecret-issuer
+  newName: registry.gitlab.com/genral73/k8s-tools/sealedsecret-issuer
+  newTag: latest

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sealedissuer-deployment
+spec:
+  revisionHistoryLimit: 0
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sealedissuer-frontend
+  template:
+    metadata:
+      labels:
+        app: sealedissuer-frontend
+    spec:
+      volumes:
+        - name: certificate-file
+          secret:
+            secretName: sealedissuer-certificate
+      containers:
+        - name: sealedissuer
+          image: localhost:5000/sealedissuer
+          volumeMounts:
+            - name: certificate-file
+              mountPath: /kubeseal/cert.pem
+              subPath: cert.pem
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: "0.2"
+              memory: "50Mi"
+            limits:
+              cpu: "0.25"
+              memory: "100Mi"

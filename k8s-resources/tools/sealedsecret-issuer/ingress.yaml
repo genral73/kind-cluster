@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+  name: sealedissuer-ingress
+spec:
+  rules:
+    - host: sealedissuer.localhost
+      http:
+        paths:
+          - backend:
+              serviceName: sealedissuer-svc
+              servicePort: http
+            path: /

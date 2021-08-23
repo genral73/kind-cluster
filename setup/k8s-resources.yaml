@@ -177,4 +177,23 @@ spec:
   syncPolicy:
     automated:
       prune: true
-      selfHeal: true        
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sealedsecret-issuer
+  namespace: argocd
+spec:
+  project: k8s-resources
+  source:
+    repoURL: 'https://github.com/genral73/k8s-kind.git'
+    path: k8s-resources/tools/sealedsecret-issuer
+    targetRevision: HEAD
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: k8s-resources
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
