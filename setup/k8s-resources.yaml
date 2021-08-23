@@ -144,7 +144,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: k8s-resources-tools
+  name: k8s-tools
   namespace: argocd
 spec:
   project: default
@@ -163,7 +163,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: k8s-resources-namespaces
+  name: k8s-namespaces
   namespace: argocd
 spec:
   project: default
