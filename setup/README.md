@@ -20,19 +20,15 @@ helm repo update
 helm install kubedb-operator appscode/kubedb --version v2021.06.23 -n kube-system 
 helm install kubedb-catalog  appscode/kubedb-catalog -f kubedb-values.yaml --version v2021.06.23 -n kube-system
 ``` -->
-3. create argocd namesapce
+3. 
 ```bash
-kubectl create ns argocd
-```
-4. 
-```bash
-kubectl apply -f git-reg-cred.yaml
+kubectl apply -f argocd-src.yaml
 ```
 5. 
 use the following command to install argocd instance:
 ```bash
 helm repo add argo https://argoproj.github.io/argo-helm ; helm repo update
-helm install argocd argo/argo-cd -f ./argocd-values.yaml -n argocd
+helm install argocd argo/argo-cd -f ./argocd-values.yaml --version=3.6.11 -n argocd
 
 kubectl get pod -w
 ```

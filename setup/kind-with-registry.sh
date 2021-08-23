@@ -18,7 +18,7 @@ curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
 chmod +x ./kind
 sudo mv ./kind  /usr/local/bin/
 
-cat <<EOF | kind create cluster --image kindest/node:v1.22.0 --name kind01 --config=-
+cat <<EOF | kind create cluster --image kindest/node:v1.21.2 --name kind01 --config=-
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 containerdConfigPatches:
