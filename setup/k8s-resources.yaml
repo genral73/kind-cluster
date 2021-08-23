@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: k8s-tools
+  name: k8s-resources
   labels:
     environment: k8s-cluster
 ---
@@ -28,8 +28,8 @@ type: Opaque
 apiVersion: v1
 kind: ResourceQuota
 metadata:
-  name: k8s-tools-resources-quota
-  namespace: k8s-tools
+  name: k8s-resources-resources-quota
+  namespace: k8s-resources
 spec:
   hard:
     limits.cpu: "4000m"
@@ -48,8 +48,8 @@ spec:
 apiVersion: v1
 kind: LimitRange
 metadata:
-  name: k8s-tools-limit-range
-  namespace: k8s-tools
+  name: k8s-resources-limit-range
+  namespace: k8s-resources
 spec:
   limits:
   - default:
@@ -64,7 +64,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: default
-  namespace: k8s-tools
+  namespace: k8s-resources
 imagePullSecrets:
 - name: github-reg-cred
 - name: gitlab-reg-cred
@@ -72,7 +72,7 @@ imagePullSecrets:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: k8s-tools-root-psp
+  name: k8s-resources-root-psp
   labels:
     addonmanager.kubernetes.io/mode: EnsureExists
 roleRef:
@@ -82,25 +82,25 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: k8s-tools
+  namespace: k8s-resources
 ---
 # apiVersion: rbacmanager.reactiveops.io/v1beta1
 # kind: RBACDefinition
 # metadata:
-#   name: k8s-tools-app-operators
+#   name: k8s-resources-app-operators
 # rbacBindings:
 #   - name: users
 #     subjects:
 #       - kind: User
 #         name: "dafaallah"
 #     roleBindings:
-#       - namespace: "k8s-tools"
+#       - namespace: "k8s-resources"
 #         clusterRole: app-operator
 # ---
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: k8s-tools
+  name: k8s-resources
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -109,7 +109,7 @@ spec:
   sourceRepos:
   - '*'
   destinations:
-  - namespace: k8s-tools
+  - namespace: k8s-resources
     server: https://kubernetes.default.svc
 
   clusterResourceWhitelist:
@@ -131,9 +131,9 @@ spec:
     warn: false
   roles:
   - name: k8s-operator
-    description: Read-only privileges to k8s-tools
+    description: Read-only privileges to k8s-resources
     policies:
-    - p, proj:k8s-tools:k8s-operator, applications, *, k8s-tools/*, allow
+    - p, proj:k8s-resources:k8s-operator, applications, *, k8s-resources/*, allow
     groups:
     - dafaallah
     - admin
@@ -144,17 +144,17 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: k8s-tools-config
+  name: k8s-resources
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: 'https://github.com/genral73/k8s-kind.git'
-    path: k8s-tools-config
+    path: k8s-resources-ns
     targetRevision: HEAD
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: k8s-tools
+    namespace: k8s-resources
   syncPolicy:
     automated:
       prune: true
