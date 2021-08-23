@@ -109,7 +109,7 @@ spec:
   sourceRepos:
   - '*'
   destinations:
-  - namespace: k8s-resources
+  - namespace: '*'
     server: https://kubernetes.default.svc
 
   clusterResourceWhitelist:
