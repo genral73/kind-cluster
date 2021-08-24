@@ -1,0 +1,9 @@
+apiVersion: v1
+appVersion: "1.0"
+description: To Enc/Dec the secret on k8s cluster
+name: sealedissuer-chart
+version: "1.0"
+icon: https://github.com/genral73
+maintainers:
+- email: genral73@gmail.com
+  name: Dafaallah Moh
