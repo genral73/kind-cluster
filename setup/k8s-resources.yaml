@@ -209,6 +209,9 @@ spec:
     repoURL: 'https://github.com/genral73/k8s-kind.git'
     path: k8s-resources/tools/sealedsecret-issuer
     targetRevision: HEAD
+    helm:
+      valueFiles:
+        - values.yaml      
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: k8s-resources
