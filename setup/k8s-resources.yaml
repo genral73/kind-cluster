@@ -204,7 +204,7 @@ metadata:
   name: minio
   namespace: argocd
 spec:
-  project: darkstore-dev
+  project: k8s-resources
   source:
     repoURL: 'https://github.com/genral73/k8s-kind.git'
     path: k8s-resources/tools/minio
